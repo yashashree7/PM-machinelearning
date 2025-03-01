@@ -1,12 +1,31 @@
-import streamlit as st
-import pandas as pd
+name: Deploy Streamlit App
 
-st.title('🤖Machine learning app')
+on:
+  push:
+    branches:
+      - master  # Runs on code push to the master branch
+  pull_request:
+    branches:
+      - master  # Runs on PR to master
 
-st.info('This is a app that builds a machine learning model!')
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-with st.expander('Data'):
-  st.write('**Parameters**')
-  df = pd.read_csv('https://raw.githubusercontent.com/yashashree7/predictive-maintanence/refs/heads/master/streamlit_app.py')
-  df
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Deploy to Streamlit
+        run: |
+          streamlit run streamlit_app.py
